@@ -24,6 +24,6 @@ public class LoginController {
     @NettyRequestMapping("/")
     public String login(String userName, String passWord) {
 
-        return null;
+        return "ddddddddddddddd";
     }
 }

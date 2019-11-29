@@ -19,7 +19,7 @@ import java.io.File;
 public interface SysConstants {
 
     String BASE_PATH = System.getProperty("app.home", System.getProperty("user.dir")) + File.separator + "src" + File.separator + "webapp";
-    String[] STATIC_SOURCE = {"html", "jpg", "js", "css", "txt","pdf"};
+    String[] STATIC_SOURCE = {"html", "jpg", "js", "css", "txt","pdf","ico"};
     String BASE_PACKAGE = "com.netty.server.module";
 
 }

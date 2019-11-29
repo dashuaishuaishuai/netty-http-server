@@ -37,13 +37,12 @@ public class ClassInstanceHandler {
      * 获取模块下所有的class
      */
     public ClassInstanceHandler getModuleClass(String packageName) {
-        URL url = this.getClass().getResource("/com/netty/server/module");
+        URL url  =this.getClass().getResource("/"+packageName.replaceAll("\\.", "/"));
         File dir = new File(url.getFile());
         for (File file : dir.listFiles()) {
             if (file.isDirectory()) {
                 //递归读取包
-                String str = packageName +"/"+ file.getName();
-                System.out.println(str);
+                String str = packageName +"."+ file.getName();
                 getModuleClass(str);
             } else {
                 String className = packageName + "." + file.getName().replace(".class", "");
@@ -84,8 +83,8 @@ public class ClassInstanceHandler {
             Class<? extends Object> clazz = v.getClass();
             if (clazz.isAnnotationPresent(NettyController.class)) {
                 String baseUrl = "";
-                if (clazz.isAnnotationPresent(NettyRequestMapping.class)) {
-                    NettyRequestMapping annotation = clazz.getAnnotation(NettyRequestMapping.class);
+                if (clazz.isAnnotationPresent(NettyController.class)) {
+                    NettyController annotation = clazz.getAnnotation(NettyController.class);
                     baseUrl = annotation.value();
                 }
                 Method[] methods = clazz.getMethods();
@@ -101,6 +100,7 @@ public class ClassInstanceHandler {
                     try {
                         controllerMap.put(url, clazz.newInstance());
                     } catch (Exception e) {
+                        System.exit(-1);
                         e.printStackTrace();
                     }
                 }

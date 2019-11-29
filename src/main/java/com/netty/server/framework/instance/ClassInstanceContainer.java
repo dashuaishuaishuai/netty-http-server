@@ -8,6 +8,7 @@
 package com.netty.server.framework.instance;
 
 import com.netty.server.Container;
+import com.netty.server.framework.constants.SysConstants;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -24,7 +25,7 @@ public class ClassInstanceContainer implements Container {
 
     @Override
     public void start(String... arg) {
-        new ClassInstanceHandler().getModuleClass("/com/netty/server/module").getNeedInstanceClass().initHandlerMapping();
+        new ClassInstanceHandler().getModuleClass(SysConstants.BASE_PACKAGE).getNeedInstanceClass().initHandlerMapping();
     }
 
 

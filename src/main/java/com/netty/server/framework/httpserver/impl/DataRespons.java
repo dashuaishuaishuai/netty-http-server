@@ -7,12 +7,13 @@
  */
 package com.netty.server.framework.httpserver.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.netty.server.framework.httpserver.HttpServerResponse;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.QueryStringDecoder;
+import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.multipart.Attribute;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import io.netty.handler.codec.http.multipart.InterfaceHttpData;
@@ -26,8 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.netty.server.framework.instance.ClassInstanceHandler.handlerMapping;
 import static com.netty.server.framework.instance.ClassInstanceHandler.controllerMap;
+import static com.netty.server.framework.instance.ClassInstanceHandler.handlerMapping;
 
 /**
  * 〈一句话功能简述〉
@@ -51,8 +52,14 @@ public class DataRespons implements HttpServerResponse {
             Parameter[] params = method.getParameters();
             Object[] paramValues = Arrays.stream(params).map(it -> requestParams.get(it)).collect(Collectors.toList()).toArray();
             try {
-                Object obj = method.invoke(controllerMap.get(realUrl), paramValues);
-                System.out.println(obj);
+                Object result = method.invoke(controllerMap.get(realUrl), paramValues);
+                FullHttpResponse fullHttpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, code, Unpooled.copiedBuffer(JSON.toJSONString(result).getBytes("UTF-8")));
+                fullHttpResponse.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json");
+                fullHttpResponse.headers().set(HttpHeaderNames.CONTENT_LENGTH, fullHttpResponse.content().readableBytes());
+                ChannelFuture future = ctx.writeAndFlush(fullHttpResponse);
+                if (!HttpUtil.isKeepAlive(fullHttpRequest)) {
+                    future.addListener(ChannelFutureListener.CLOSE);
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();
