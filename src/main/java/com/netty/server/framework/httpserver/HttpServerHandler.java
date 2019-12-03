@@ -9,7 +9,7 @@ package com.netty.server.framework.httpserver;
 
 import com.netty.server.framework.constants.SysConstants;
 import com.netty.server.framework.httpserver.impl.CommonResponse;
-import com.netty.server.framework.httpserver.impl.DataRespons;
+import com.netty.server.framework.httpserver.impl.DataResponse;
 import com.netty.server.framework.httpserver.impl.StaticResponse;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -36,6 +36,7 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest fullHttpRequest) throws Exception {
         /**
          * 根据请求后缀判断是否是静态资源
+         * G:\my-work-code\MyWorkSpace\netty-http-server\src\webapp\img
          */
         if (checkIsStaticResource(fullHttpRequest.uri())) {
             File file = new File(SysConstants.BASE_PATH + fullHttpRequest.uri());
@@ -45,7 +46,7 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
                 new CommonResponse().response(ctx, fullHttpRequest, HttpResponseStatus.NOT_FOUND, "File not found");
             }
         } else {  //请求数据
-            new DataRespons().response(ctx, fullHttpRequest, HttpResponseStatus.NOT_FOUND, "File not found");
+            new DataResponse().response(ctx, fullHttpRequest, HttpResponseStatus.NOT_FOUND, "File not found");
 
         }
     }
